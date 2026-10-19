@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { TasksContext } from "../Context/TasksContext";
 
 
-function useTasks(){
+ export function useTasks(){
 
   const context = useContext(TasksContext);
 
@@ -12,3 +12,4 @@ function useTasks(){
 
   return context;
 }
+
