@@ -4,6 +4,7 @@ import { useTasks } from "../Hooks/useTasks";
 import TaskCard from "../Components/Tasks/TaskCard";
 
 
+
 function Tasks(){
 
   const { tasks , setTasks } = useTasks();
@@ -12,6 +13,9 @@ function Tasks(){
   const [search, setSearch ] = useState("");
   const [ statusFilter, setstatusFilter] = useState("All");
   const [priorityfilter, setPriorityFilter] = useState("All");
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) => {
@@ -53,8 +57,18 @@ function Tasks(){
 
   }
 
+  //Tasks completed => count
+  const completedTasks = tasks.filter((task) => task.status === "Completed").length;
+
+  //Tasks in progress => count
+  const inProgressTasks = tasks.filter((task) => task.status === "In Progress").length;
+
+  //tasks todo => count
+  const todoTasks = tasks.filter((task) => task.status === "Todo").length;
+
   return(
  <div className="p-6">
+
     <div className="mb-8 ">
       <h1
        className="text-3xl font-bold text-gray-900">Tasks</h1>
@@ -62,6 +76,68 @@ function Tasks(){
        <p  className="mt-2 text-gray-500">
         Organize your work and track your progress.</p>
     </div>
+
+    {/* //task card */}
+
+    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-medium text-gray-900">Todo</h3>
+        <p className="text-3xl font-bold text-blue-600">{todoTasks}</p>
+      </div>
+
+       <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-medium text-gray-900">In Progress</h3>
+        <p className="text-3xl font-bold text-yellow-500">{inProgressTasks}</p>
+      </div>
+
+
+      <div className="rounded-lg border bg-white p-6 shadow-sm">
+        <h3 className="text-lg font-medium text-gray-900">Completed</h3>
+        <p className="text-3xl font-bold text-green-500">{completedTasks}</p>
+      </div>
+
+    </div>
+
+    {/* //Search and filters */}
+    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <input 
+      type="text"
+      placeholder="Search tasks..."
+      className="w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <select
+      className="w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+      value={statusFilter}
+      onChange={(e) => setstatusFilter(e.target.value)}
+      >
+
+        <option value="All">All statuses</option>
+        <option value="Todo">Todo</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        </select>
+
+
+        <select
+        className="w-full px-4 py-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+        value={priorityfilter}
+        onChange={(e) => setPriorityFilter(e.target.value)}
+        >
+          <option value="All">All Priorities</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+    </div>
+
+
+
+
+
 
     {filteredTasks.length === 0 ? (
       <div className="rounded-xl border bg-white p-10 text-center">

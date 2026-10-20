@@ -1,6 +1,6 @@
 
 
-function TaskCard({task, projectName, onToggleComplete, onDelete}){
+function TaskCard({task, projectName, onToggleComplete, onDelete, onEdit}){
 
   const priorityStyles = {
     Low: "bg-gray-100 text-gray-700",
