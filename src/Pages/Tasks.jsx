@@ -2,11 +2,17 @@ import { useMemo, useState } from "react";
 import { useProjects } from "../Hooks/useProjects";
 import { useTasks } from "../Hooks/useTasks";
 import TaskCard from "../Components/Tasks/TaskCard";
+import Button from "../Components/UI/Button";
+import TaskForm from "../Components/Tasks/TaskForm";
+import Modal from "../Components/UI/Modal";
+import KanbanBoard from "../Components/Tasks/KanbanBoard";
 
 
 
 function Tasks(){
 
+
+  const [view, setView ] = useState("list");
   const { tasks , setTasks } = useTasks();
   const { projects } = useProjects();
 
@@ -57,6 +63,77 @@ function Tasks(){
 
   }
 
+  function handleCloseModal(){
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  }
+
+//create task function 
+  function handleCreateTask(TaskData){
+
+    setTasks((currentTasks) => [
+      ...currentTasks,
+
+      {
+        ...TaskData,
+       id: Date.now()
+      }
+    ])
+
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  }
+
+
+//edit task function
+  function handleEditTask(task){
+
+    setSelectedTask(task);
+    setIsModalOpen(true);
+
+  }
+
+  // update task function
+  function handleUpdateTask(updateTask){
+
+    setTasks((currentTasks) => 
+
+      currentTasks.map((task) => 
+      task.id === selectedTask.id
+        ?  {...task, ...updateTask}
+        : task
+      )
+    
+    );
+
+    setIsModalOpen(false);
+    setSelectedTask(null);
+
+  }
+
+  //close modal function
+  function handleCloseModal(){
+
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  }
+
+// handle status change function
+  function handleStatusChange(taskToUpdate, newStatus){
+    setTasks((currentTasks) =>
+    currentTasks.map((task) =>
+    task.id === taskToUpdate.id ?
+     {...task, status: newStatus}
+     : task
+    )
+  );
+
+
+  }
+
+
+
+
   //Tasks completed => count
   const completedTasks = tasks.filter((task) => task.status === "Completed").length;
 
@@ -69,12 +146,32 @@ function Tasks(){
   return(
  <div className="p-6">
 
-    <div className="mb-8 ">
-      <h1
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between ">
+
+      <div>
+          <h1
        className="text-3xl font-bold text-gray-900">Tasks</h1>
 
        <p  className="mt-2 text-gray-500">
         Organize your work and track your progress.</p>
+      </div>
+
+      <div className="flex flex-wrap gap-2 items-center">
+
+        <Button onClick={() => setView("list")} variant={`${view === "list" ? "primary" : "secondary"}`}>List</Button>
+        <Button onClick={() => setView("board")} variant={`${view === "board" ? "primary" : "secondary"}`}>Board</Button>
+
+
+        <Button onClick={() => setIsModalOpen(true)}>Create Task</Button>
+
+      </div>
+
+      
+
+
+
+
+     
     </div>
 
     {/* //task card */}
@@ -139,7 +236,13 @@ function Tasks(){
 
 
 
-    {filteredTasks.length === 0 ? (
+    {view === "board" ? (
+      
+      <KanbanBoard tasks={filteredTasks} projects={projects} onStatusChange={handleStatusChange} />
+    )
+    :
+    
+    filteredTasks.length === 0 ? (
       <div className="rounded-xl border bg-white p-10 text-center">
         <h2 className="font-semibold text-gray-800">No tasks found.</h2>
 
@@ -160,11 +263,30 @@ function Tasks(){
             projectName={project?.name ?? "Unknown Project"}
             onToggleComplete={handleToggleComplete}
             onDelete={handleDelete}
+            onEdit={handleEditTask}
             />
           )
         })}
       </div>
     )}
+
+    <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={selectedTask ? "Edit Task" : "Create Task"}>
+
+      <TaskForm
+      key={selectedTask?.id ?? "New Task"}
+      task={selectedTask}
+      onSubmit={selectedTask ? handleUpdateTask : handleCreateTask}
+      onCancel={handleCloseModal}
+      />
+
+    </Modal>
+
+
+
+
+
+
+
     </div>
   )
 }

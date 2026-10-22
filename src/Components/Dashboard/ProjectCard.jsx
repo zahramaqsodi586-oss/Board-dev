@@ -1,6 +1,6 @@
 
 
-function ProjectCard({ project, onEdit, onDelete }) {
+function ProjectCard({ project, onEdit, onDelete, taskCount }) {
 
 
   return (
@@ -37,9 +37,9 @@ function ProjectCard({ project, onEdit, onDelete }) {
         </div>
       </div>
 
-      <div className="mt-5 pt-4 border-t text-sm text-gray-500">
+      <div className="mt-5 pt-4 border-t flex items-center justify-between gap-3 ">
         <span className="text-sm text-gray-600">
-           {project.tasks} tasks
+           {taskCount ?? project.tasks ?? 0} tasks
         </span>
 
         <div className="flex gap-2">

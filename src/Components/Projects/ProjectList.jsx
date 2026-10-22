@@ -1,7 +1,9 @@
+import { useTasks } from "../../Hooks/useTasks";
 import ProjectCard from "../Dashboard/ProjectCard";
 
 
 function ProjectList({ projects, onEdit, onDelete}){
+  const { tasks } = useTasks();
 
   if(projects.length == 0){
     return(
@@ -17,14 +19,24 @@ function ProjectList({ projects, onEdit, onDelete}){
 
   return(
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {projects.map((project) => (
+
+      {projects.map((project) => {
+
+        const taskCount = tasks.filter(
+          (task) => task.projectId === project.id,
+        ).length;
+
+
+      return(
         <ProjectCard 
         key={project.id}
         project={project}
         onEdit={onEdit}
+        taskCount={taskCount}
         onDelete={onDelete}
         />
-      ))}
+      );
+  })}
     </div>
   )
 }
