@@ -12,7 +12,7 @@ import KanbanBoard from "../Components/Tasks/KanbanBoard";
 function Tasks(){
 
 
-  const [view, setView ] = useState("list");
+  const [view, setView ] = useState("board");
   const { tasks , setTasks } = useTasks();
   const { projects } = useProjects();
 
